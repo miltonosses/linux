@@ -1,5 +1,3 @@
-# Linux <!-- Metadata: type: Outline; created: 2020-05-06 21:56:39; reads: 61; read: 2020-05-07 23:01:50; revision: 61; modified: 2020-05-07 23:01:50; importance: 0/5; urgency: 0/5; -->
-# Linux <!-- Metadata: type: Note; created: 2020-05-06 21:56:39; reads: 12; read: 2020-05-06 22:27:30; revision: 3; modified: 2020-05-06 22:09:38; -->
 
 ## Linux Performance <!-- Metadata: type: Note; tags: performance,bpf; created: 2020-05-07 14:22:19; reads: 19; read: 2020-05-07 22:57:27; revision: 5; modified: 2020-05-07 22:57:27; -->
 
