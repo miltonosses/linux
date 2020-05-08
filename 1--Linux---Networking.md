@@ -2,7 +2,6 @@
 # Linux Networking configuration <!-- Metadata: type: Note; created: 2020-05-08 13:25:03; reads: 4; read: 2020-05-08 13:25:37; revision: 3; modified: 2020-05-08 13:25:37; -->
 
 
-[Networking training oracle internal ... brocken](http://corum.us.oracle.com/acme/network.html)
 
 
 
