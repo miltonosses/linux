@@ -10,7 +10,7 @@
 # Linux Networking configuration <!-- Metadata: type: Note; tags: linux,networking,nmcli,ip; created: 2020-05-08 13:25:03; reads: 54; read: 2020-05-19 12:31:36; revision: 15; modified: 2020-05-19 12:31:36; -->
 
 
-[Networking training oracle internal ... brocken](http://corum.us.oracle.com/acme/network.html)
+[Networking training oracle internal ... brocken](http://xxxoracle.com/acme/network.html)
 
 
 
