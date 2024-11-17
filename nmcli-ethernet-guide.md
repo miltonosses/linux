@@ -76,7 +76,7 @@
 4. Use tab completion with nmcli for command syntax help
 5. Connection names are case-sensitive
 
-# LACP (802.3ad) Bond Configuration
+# Port Channel (Bond) Configuration in LACP (802.3ad)
 
 ## Creating LACP Bond Interface
 
