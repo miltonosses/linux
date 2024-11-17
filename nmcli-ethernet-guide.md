@@ -76,44 +76,116 @@
 4. Use tab completion with nmcli for command syntax help
 5. Connection names are case-sensitive
 
+# LACP (802.3ad) Bond Configuration
+
+## Creating LACP Bond Interface
+
+| Command | Description |
+|---------|-------------|
+| `nmcli con add type bond con-name bond0 ifname bond0 bond.options "mode=802.3ad,miimon=100,downdelay=200,updelay=200,lacp_rate=1,xmit_hash_policy=layer3+4"` | Create bond interface with LACP parameters |
+
+## Adding Slave Interfaces to LACP Bond
+
+| Command | Description |
+|---------|-------------|
+| `nmcli con add type bond-slave ifname eth0 master bond0` | Add eth0 as slave to bond0 |
+| `nmcli con add type bond-slave ifname eth1 master bond0` | Add eth1 as slave to bond0 |
+
+## Configuring IP for LACP Bond Interface
+
+| Command | Description |
+|---------|-------------|
+| `nmcli con mod bond0 ipv4.addresses "192.168.1.100/24"` | Set static IP for bond0 |
+| `nmcli con mod bond0 ipv4.gateway "192.168.1.1"` | Set gateway for bond0 |
+| `nmcli con mod bond0 ipv4.method manual` | Set to static IP configuration |
+
+## Activating LACP Bond Interface
+
+| Command | Description |
+|---------|-------------|
+| `nmcli con up bond0` | Activate bond interface |
+| `nmcli con up bond-slave-eth0` | Activate first slave |
+| `nmcli con up bond-slave-eth1` | Activate second slave |
+
+## Verifying LACP Bond Configuration
+
+| Command | Description |
+|---------|-------------|
+| `cat /proc/net/bonding/bond0` | View bond interface details |
+| `nmcli con show bond0` | Show bond connection details |
+| `nmcli device status` | Verify bond and slave status |
+
+## Complete LACP Setup Script
+
+```bash
+# Create LACP bond interface
+nmcli con add type bond con-name bond0 ifname bond0 bond.options "mode=802.3ad,miimon=100,downdelay=200,updelay=200,lacp_rate=1,xmit_hash_policy=layer3+4"
+
+# Add slave interfaces
+nmcli con add type bond-slave ifname eth0 master bond0
+nmcli con add type bond-slave ifname eth1 master bond0
+
+# Configure IP settings
+nmcli con mod bond0 ipv4.addresses "192.168.1.100/24"
+nmcli con mod bond0 ipv4.gateway "192.168.1.1"
+nmcli con mod bond0 ipv4.method manual
+nmcli con mod bond0 ipv4.dns "8.8.8.8,8.8.4.4"
+
+# Activate all interfaces
+nmcli con up bond0
+nmcli con up bond-slave-eth0
+nmcli con up bond-slave-eth1
+```
+
+## LACP Bond Options Explained
+
+| Option | Description |
+|--------|-------------|
+| `mode=802.3ad` | IEEE 802.3ad Dynamic link aggregation (LACP) |
+| `miimon=100` | Link monitoring frequency in milliseconds |
+| `downdelay=200` | Wait 200 milliseconds before disabling a slave |
+| `updelay=200` | Wait 200 milliseconds before enabling a slave |
+| `lacp_rate=1` | LACP fast rate (1=fast, 0=slow) |
+| `xmit_hash_policy=layer3+4` | Load balancing based on IP and Port |
+
 # Port Channel (Bond) Configuration in Active-Backup Mode
 
 ## Creating Port Channel/Bond Interface
 
-| Command | Description | Example |
-|---------|-------------|---------|
-| `nmcli con add type bond con-name bond0 ifname bond0 bond.options "mode=active-backup,miimon=100,downdelay=2000,updelay=5000,num_grat_arp=100"` | Create bond interface with specified parameters | `nmcli con add type bond con-name bond0 ifname bond0 bond.options "mode=active-backup,miimon=100,downdelay=2000,updelay=5000,num_grat_arp=100"` |
+| Command | Description |
+|---------|-------------|
+| `nmcli con add type bond con-name bond0 ifname bond0 bond.options "mode=active-backup,miimon=100,downdelay=2000,updelay=5000,num_grat_arp=100"` | Create bond interface with specified parameters | 
 
 ## Adding Slave Interfaces to Bond
 
-| Command | Description | Example |
-|---------|-------------|---------|
-| `nmcli con add type bond-slave ifname eth0 master bond0` | Add eth0 as slave to bond0 | `nmcli con add type bond-slave ifname eth0 master bond0` |
-| `nmcli con add type bond-slave ifname eth1 master bond0` | Add eth1 as slave to bond0 | `nmcli con add type bond-slave ifname eth1 master bond0` |
+| Command | Description |
+|---------|-------------|
+| `nmcli con add type bond-slave ifname eth0 master bond0` | Add eth0 as slave to bond0 |
+| `nmcli con add type bond-slave ifname eth1 master bond0` | Add eth1 as slave to bond0 |
 
 ## Configuring IP for Bond Interface
 
-| Command | Description | Example |
-|---------|-------------|---------|
-| `nmcli con mod bond0 ipv4.addresses "192.168.1.100/24"` | Set static IP for bond0 | `nmcli con mod bond0 ipv4.addresses "10.0.0.100/24"` |
-| `nmcli con mod bond0 ipv4.gateway "192.168.1.1"` | Set gateway for bond0 | `nmcli con mod bond0 ipv4.gateway "10.0.0.1"` |
-| `nmcli con mod bond0 ipv4.method manual` | Set to static IP configuration | `nmcli con mod bond0 ipv4.method manual` |
+| Command | Description | 
+|---------|-------------|
+| `nmcli con mod bond0 ipv4.addresses "192.168.1.100/24"` | Set static IP for bond0 | 
+| `nmcli con mod bond0 ipv4.gateway "192.168.1.1"` | Set gateway for bond0 | 
+| `nmcli con mod bond0 ipv4.method manual` | Set to static IP configuration | 
 
-## Activating Bond Interface
+# Activating Bond Interface
 
-| Command | Description | Example |
-|---------|-------------|---------|
-| `nmcli con up bond0` | Activate bond interface | `nmcli con up bond0` |
-| `nmcli con up bond-slave-eth0` | Activate first slave | `nmcli con up bond-slave-eth0` |
-| `nmcli con up bond-slave-eth1` | Activate second slave | `nmcli con up bond-slave-eth1` |
+| Command | Description | 
+|---------|-------------|
+| `nmcli con up bond0` | Activate bond interface         | 
+| `nmcli con up bond-slave-eth0` | Activate first slave  | 
+| `nmcli con up bond-slave-eth1` | Activate second slave | 
 
 ## Verifying Bond Configuration
 
-| Command | Description | Example |
-|---------|-------------|---------|
-| `cat /proc/net/bonding/bond0` | View bond interface details | `cat /proc/net/bonding/bond0` |
-| `nmcli con show bond0` | Show bond connection details | `nmcli con show bond0` |
-| `nmcli device status` | Verify bond and slave status | `nmcli device status` |
+| Command | Description |
+|---------|-------------|
+| `cat /proc/net/bonding/bond0` | View bond interface details 
+| `nmcli con show bond0` | Show bond connection details       
+| `nmcli device status` | Verify bond and slave status         
 
 ## Complete Setup Example
 
@@ -150,89 +222,4 @@ nmcli device status
 | `downdelay=2000` | Wait 2 seconds before disabling a slave |
 | `updelay=5000` | Wait 5 seconds before enabling a slave |
 | `num_grat_arp=100` | Number of gratuitous ARP messages to send |
-
-
-# LACP (802.3ad) Port Channel Configuration
-
-## Creating LACP Bond Interface
-
-| Command | Description | Example |
-|---------|-------------|---------|
-| `nmcli con add type bond con-name bond1 ifname bond1 bond.options "mode=802.3ad,miimon=100,downdelay=200,updelay=200,lacp_rate=1,xmit_hash_policy=layer3+4"` | Create LACP bond interface with specified parameters | `nmcli con add type bond con-name bond1 ifname bond1 bond.options "mode=802.3ad,miimon=100,downdelay=200,updelay=200,lacp_rate=1,xmit_hash_policy=layer3+4"` |
-
-## Adding Slave Interfaces to LACP Bond
-
-| Command | Description | Example |
-|---------|-------------|---------|
-| `nmcli con add type bond-slave ifname eth0 master bond1` | Add eth0 as slave to bond1 | `nmcli con add type bond-slave ifname eth0 master bond1` |
-| `nmcli con add type bond-slave ifname eth1 master bond1` | Add eth1 as slave to bond1 | `nmcli con add type bond-slave ifname eth1 master bond1` |
-
-## Configuring IP for LACP Bond Interface
-
-| Command | Description | Example |
-|---------|-------------|---------|
-| `nmcli con mod bond1 ipv4.addresses "192.168.1.100/24"` | Set static IP for bond1 | `nmcli con mod bond1 ipv4.addresses "10.0.0.100/24"` |
-| `nmcli con mod bond1 ipv4.gateway "192.168.1.1"` | Set gateway for bond1 | `nmcli con mod bond1 ipv4.gateway "10.0.0.1"` |
-| `nmcli con mod bond1 ipv4.method manual` | Set to static IP configuration | `nmcli con mod bond1 ipv4.method manual` |
-
-## Activating LACP Bond Interface
-
-| Command | Description | Example |
-|---------|-------------|---------|
-| `nmcli con up bond1` | Activate LACP bond interface | `nmcli con up bond1` |
-| `nmcli con up bond-slave-eth0` | Activate first slave | `nmcli con up bond-slave-eth0` |
-| `nmcli con up bond-slave-eth1` | Activate second slave | `nmcli con up bond-slave-eth1` |
-
-## Verifying LACP Bond Configuration
-
-| Command | Description | Example |
-|---------|-------------|---------|
-| `cat /proc/net/bonding/bond1` | View LACP bond interface details | `cat /proc/net/bonding/bond1` |
-| `nmcli con show bond1` | Show LACP bond connection details | `nmcli con show bond1` |
-| `nmcli device status` | Verify bond and slave status | `nmcli device status` |
-
-## Complete LACP Setup Example
-
-```bash
-# Create LACP bond interface
-nmcli con add type bond con-name bond1 ifname bond1 bond.options "mode=802.3ad,miimon=100,downdelay=200,updelay=200,lacp_rate=1,xmit_hash_policy=layer3+4"
-
-# Add slave interfaces
-nmcli con add type bond-slave ifname eth0 master bond1
-nmcli con add type bond-slave ifname eth1 master bond1
-
-# Configure IP settings
-nmcli con mod bond1 ipv4.addresses "192.168.1.100/24"
-nmcli con mod bond1 ipv4.gateway "192.168.1.1"
-nmcli con mod bond1 ipv4.method manual
-nmcli con mod bond1 ipv4.dns "8.8.8.8,8.8.4.4"
-
-# Activate all interfaces
-nmcli con up bond1
-nmcli con up bond-slave-eth0
-nmcli con up bond-slave-eth1
-
-# Verify configuration
-cat /proc/net/bonding/bond1
-nmcli device status
-```
-
-## LACP Bond Options Explained
-
-| Option | Description |
-|--------|-------------|
-| `mode=802.3ad` | IEEE 802.3ad Dynamic link aggregation |
-| `miimon=100` | Link monitoring frequency in milliseconds |
-| `downdelay=200` | Wait 200 milliseconds before disabling a slave |
-| `updelay=200` | Wait 200 milliseconds before enabling a slave |
-| `lacp_rate=1` | Sets LACP rate to fast (1 = fast, 0 = slow) |
-| `xmit_hash_policy=layer3+4` | Load balancing based on IP and port |
-
-## Additional LACP Verification Commands
-
-| Command | Description | Example |
-|---------|-------------|---------|
-| `teamdctl bond1 state` | View LACP state information | `teamdctl bond1 state` |
-| `ip link show bond1` | Show LACP bond interface status | `ip link show bond1` |
-| `ethtool bond1` | Show LACP bond interface settings | `ethtool bond1` |
 
